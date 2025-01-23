@@ -46,6 +46,7 @@ Example transformation:
   "finance": ["customers-100.csv"],
   "sales": ["organizations-100.csv", "people-100.csv"]
 }
+```
 
 This structure is passed as a prop to the `Dashboard` component, which dynamically renders:
 
