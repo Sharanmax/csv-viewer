@@ -1,47 +1,44 @@
-# csv-viewer
+Dynamic CSV Viewer Dashboard
+This project is a Dynamic CSV Viewer Dashboard built using React, Next.js, and AG Grid. The application dynamically loads CSV files from a structured folder system, allowing users to view, group, and navigate reports easily.
 
-This project was generated with [superplate](https://github.com/pankod/superplate).
+Features
+Dynamically reads and loads CSV files from a folder structure in the public/reports directory.
+Allows users to group data by specific columns with expandable and collapsible groups.
+Provides pagination and adjustable page sizes (20, 50, 100 rows).
+Includes options to remove grouping and reset the grid to its initial state.
+Fully responsive with an intuitive Material-UI-based interface.
+Setup and Installation
+Steps to Run
+Clone the Repository
 
-## Getting Started
+bash
+Copy
+Edit
+git clone <your-repo-url>
+cd <project-folder>
+Install Dependencies
 
-superplate is a Next.js all-in-one project generator. Create your project with the tools you need without spending hours on setting them up.
+bash
+Copy
+Edit
+yarn install
+Start the Development Server
 
-## Available Scripts
+bash
+Copy
+Edit
+yarn dev
+Access the Application Open your browser and navigate to http://localhost:3000.
 
-### Running the development server.
+Short Write-Up
+Dynamic File Loading
+The application scans the public/reports directory dynamically using server-side rendering (getServerSideProps). It reads the folder structure using Node.js fs and path modules and transforms the folder hierarchy into a format suitable for rendering.
 
-```bash
-    yarn dev
-```
+Each folder is displayed as a tab, and the files inside are listed for selection.
+When a CSV file is selected, the application dynamically fetches and parses it using PapaParse, generating grid data and column definitions on the fly.
+Design Choices
+Dynamic Folder Handling: The folder and file structure dynamically adapt to changes, ensuring scalability.
+Material-UI for UI: Ensures a clean and responsive user interface.
+AG Grid: Chosen for its robust features, such as grouping, filtering, sorting, and pagination.
+This design makes the dashboard highly scalable, responsive, and user-friendly, enabling dynamic report management and viewing.
 
-### Building for production.
-
-```bash
-    yarn build
-```
-
-### Running the production server.
-
-```bash
-    yarn start
-```
-
-## Learn More
-
-To learn more about **superplate**, please check out the [Documentation](https://github.com/pankod/superplate).
-
-### **CSS / styled-jsx**
-
-Next.js comes with built-in support for CSS and styled-jsx. Styled-jsx is full, scoped and component-friendly CSS support for JSX (rendered on the server or the client).
-
-[Go To Documentation](https://github.com/vercel/styled-jsx)
-
-### **Prettier**
-
-An opinionated code formatter; Supports many languages; Integrates with most editors.
-
-[Go To Documentation](https://prettier.io/docs/en/index.html)
-
-## License
-
-MIT
