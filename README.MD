@@ -46,3 +46,22 @@ Example transformation:
   "finance": ["customers-100.csv"],
   "sales": ["organizations-100.csv", "people-100.csv"]
 }
+
+This structure is passed as a prop to the `Dashboard` component, which dynamically renders:
+
+- **Tabs**: Each folder is a tab.
+- **File Lists**: Files inside the selected folder are displayed for selection.
+
+## Design Choices
+
+1. **Dynamic Grouping**:
+   - AG Grid’s grouping features were leveraged to allow grouping data by any column dynamically.
+   - Group rows are rendered with custom expand/collapse toggles to maintain user interactivity.
+
+2. **Scalability**:
+   - By using `getServerSideProps`, the system is scalable and updates dynamically as new folders or files are added without requiring code changes.
+   - The application is performant even with large datasets due to AG Grid’s optimized rendering.
+
+3. **Material-UI**:
+   - Material-UI components like dropdowns and buttons provide a modern, responsive interface.
+
