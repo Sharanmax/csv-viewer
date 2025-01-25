@@ -8,7 +8,7 @@ interface DashboardProps {
 }
 
 const Dashboard: React.FC<DashboardProps> = ({ folders }) => {
-    const folderKeys = Object.keys(folders); // Extract folder names
+    const folderKeys = Object.keys(folders); 
     const [activeFolder, setActiveFolder] = useState(folderKeys[0] || ""); 
     const [activeFile, setActiveFile] = useState(
         folderKeys[0] && folders[folderKeys[0]].length > 0
