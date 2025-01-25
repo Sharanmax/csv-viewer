@@ -5,6 +5,12 @@ import { Header } from "@components/css";
 import fs from "fs";
 import path from "path";
 
+interface Folder {
+  name: string;
+  type: "directory" | "file";
+  children?: Folder[] | null;
+}
+
 interface HomeProps {
   folders: Record<string, string[]>;
 }
@@ -29,7 +35,7 @@ const Home: React.FC<HomeProps> = ({ folders }) => {
 export const getServerSideProps = async () => {
   const reportsPath = path.join(process.cwd(), "public", "reports");
 
-  const readFolderContents = (folderPath: string) => {
+  const readFolderContents = (folderPath: string): Folder[] => {
     const entries = fs.readdirSync(folderPath, { withFileTypes: true });
 
     return entries

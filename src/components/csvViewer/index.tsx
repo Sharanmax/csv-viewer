@@ -3,9 +3,13 @@ import { AgGridReact } from "ag-grid-react";
 import "ag-grid-community/styles/ag-grid.css";
 import "ag-grid-community/styles/ag-theme-alpine.css";
 import { ColDef } from "ag-grid-community";
-import Papa from "papaparse";
+import Papa, { ParseResult } from "papaparse";
 import Box from "@mui/material/Box";
 import { FormControl, InputLabel, MenuItem, Select, Button, SelectChangeEvent } from "@mui/material";
+
+interface CSVRow {
+    [key: string]: string | undefined;
+}
 
 interface CSVViewerProps {
     filePath: string;
@@ -13,7 +17,7 @@ interface CSVViewerProps {
 
 const CSVViewer: React.FC<CSVViewerProps> = ({ filePath }) => {
     const [columnDefs, setColumnDefs] = useState<ColDef[]>([]);
-    const [rowData, setRowData] = useState<any[]>([]);
+    const [rowData, setRowData] = useState<CSVRow[]>([]);
     const [pageSize, setPageSize] = useState(50);
     const [groupColumn, setGroupColumn] = useState<string | null>(null);
     const [expandedGroups, setExpandedGroups] = useState<Record<string, boolean>>({});
@@ -24,13 +28,13 @@ const CSVViewer: React.FC<CSVViewerProps> = ({ filePath }) => {
                 const response = await fetch(filePath);
                 const csvData = await response.text();
 
-                Papa.parse(csvData, {
+                Papa.parse<CSVRow>(csvData, {
                     header: true,
                     skipEmptyLines: true,
-                    complete: (result) => {
-                        const normalizeData = (data: any[]) =>
+                    complete: (result: ParseResult<CSVRow>) => {
+                        const normalizeData = (data: CSVRow[]) =>
                             data.map((row) => {
-                                const normalizedRow: any = {};
+                                const normalizedRow: CSVRow = {};
                                 Object.keys(row).forEach((key) => {
                                     const value = row[key];
                                     normalizedRow[key] =
@@ -49,8 +53,12 @@ const CSVViewer: React.FC<CSVViewerProps> = ({ filePath }) => {
                         setColumnDefs(columns);
                         setRowData(normalizeData(result.data));
                     },
-                    error: (error) => {
-                        console.error("Error parsing CSV:", error);
+                    error: (error: unknown) => {
+                        if (error instanceof Error) {
+                            console.error("Error parsing CSV:", error.message);
+                        } else {
+                            console.error("Error parsing CSV:", error);
+                        }
                     },
                 });
             } catch (error) {
@@ -82,12 +90,12 @@ const CSVViewer: React.FC<CSVViewerProps> = ({ filePath }) => {
         }));
     };
 
-    const processDataForGrouping = (data: any[], groupByColumn: string) => {
-        const groupedData: any[] = [];
-        const groups: Record<string, any[]> = {};
+    const processDataForGrouping = (data: CSVRow[], groupByColumn: string) => {
+        const groupedData: CSVRow[] = [];
+        const groups: Record<string, CSVRow[]> = {};
 
         data.forEach((row) => {
-            const groupKey = row[groupByColumn];
+            const groupKey = row[groupByColumn] || "Unknown";
             if (!groups[groupKey]) {
                 groups[groupKey] = [];
             }
@@ -95,7 +103,7 @@ const CSVViewer: React.FC<CSVViewerProps> = ({ filePath }) => {
         });
 
         Object.entries(groups).forEach(([groupKey, groupRows]) => {
-            groupedData.push({ [groupByColumn]: groupKey, isGroup: true, groupRows });
+            groupedData.push({ [groupByColumn]: groupKey, isGroup: true, groupRows } as any);
             if (expandedGroups[groupKey]) {
                 groupedData.push(...groupRows);
             }
@@ -165,7 +173,7 @@ const CSVViewer: React.FC<CSVViewerProps> = ({ filePath }) => {
                 </FormControl>
                 <Button
                     variant="contained"
-                    sx={{ bgcolor: 'darkblue'}}
+                    sx={{ bgcolor: 'darkblue' }}
                     color="secondary"
                     onClick={handleRemoveGrouping}
                     disabled={!groupColumn}
